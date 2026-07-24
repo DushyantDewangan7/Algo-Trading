@@ -1,0 +1,16 @@
+node_modules/
+.env
+.DS_Store
+npm-debug.log*
+paper-trading.json
+session-momentum-state.json
+big-coins-cache.json
+live-trading.log
+live-trading.log.1
+live-session-state.json
+live-session-state.json.tmp
+top-gainers-state.json
+trading.db
+trading.db-shm
+trading.db-wal
+backtest-results/

@@ -1,0 +1,30 @@
+{
+  "name": "coindcx-live-market-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A vanilla JavaScript live market dashboard powered by CoinDCX public APIs.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "check": "node --check database.js && node --check server.js && node --check public/app.js && node --check strategy/indicators.js && node --check strategy/momentum.js && node --check strategy/risk.js && node --check strategy/backtest.js && node --check strategy/regime.js && node --check strategy/sweep.js && node --check strategy/cross-sectional.js && node --check strategy/cross-sectional-comparison.js && node --check strategy/top-gainers.js && node --check strategy/trailing-stop.js && node --check strategy/top-gainers-runner.js && node --check strategy/top-gainers-backtest.js && node --check strategy/big-coins.js && node --check strategy/leverage-sim.js && node --check strategy/session-momentum.js && node --check strategy/session-momentum-backtest.js && node --check strategy/coindcx-live.js && node --check strategy/session-momentum-live.js",
+    "test": "node --test tests/*.test.js",
+    "backtest": "node strategy/backtest.js",
+    "sweep": "node strategy/sweep.js",
+    "backtest:cross": "node strategy/cross-sectional.js",
+    "backtest:cross:compare": "node strategy/cross-sectional-comparison.js",
+    "backtest:top-gainers": "node strategy/top-gainers-backtest.js",
+    "backtest:session": "node strategy/session-momentum-backtest.js",
+    "backtest:session:presets": "node scripts/run-session-backtest-presets.js",
+    "check:universe": "node scripts/check-universe.js"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "dotenv": "^17.4.2"
+  }
+}

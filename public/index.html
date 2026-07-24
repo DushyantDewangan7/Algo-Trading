@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Live CoinDCX cryptocurrency market dashboard" />
+    <title>CoinDCX Live Market</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Market dashboard home">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span>
+        </span>
+        <span>DCX<span class="brand-accent">MARKET</span></span>
+      </a>
+      <div class="header-right">
+        <div class="live-state" id="liveState">
+          <span class="live-dot"></span>
+          <span id="liveText">Connecting</span>
+        </div>
+        <div class="clock" id="clock">--:--:--</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">REAL-TIME EXCHANGE DATA</p>
+          <h1>The market,<br /><span>without the noise.</span></h1>
+          <p class="hero-copy">Live prices and 24-hour market movement from CoinDCX.</p>
+        </div>
+        <div class="hero-orbit" aria-hidden="true">
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+          <div class="coin-symbol">₿</div>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Market summary">
+        <article class="metric-card">
+          <p>Tracked markets</p>
+          <strong id="marketCount">—</strong>
+          <span>CoinDCX spot pairs</span>
+        </article>
+        <article class="metric-card">
+          <p>Markets up</p>
+          <strong class="positive" id="gainersCount">—</strong>
+          <span id="gainersPercent">Last 24 hours</span>
+        </article>
+        <article class="metric-card">
+          <p>Markets down</p>
+          <strong class="negative" id="losersCount">—</strong>
+          <span id="losersPercent">Last 24 hours</span>
+        </article>
+        <article class="metric-card featured">
+          <p>Top mover</p>
+          <strong id="topMover">—</strong>
+          <span id="topMoverChange">Waiting for data</span>
+        </article>
+      </section>
+
+      <section class="account-section">
+        <div class="section-heading account-heading">
+          <div>
+            <p class="eyebrow">PRIVATE ACCOUNT</p>
+            <h2>Portfolio & trades</h2>
+          </div>
+          <div class="secure-badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+              <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            </svg>
+            Server-side authentication
+          </div>
+        </div>
+
+        <div class="account-error hidden" id="accountError">
+          <div>
+            <strong>Account data unavailable</strong>
+            <p id="accountErrorMessage">Check your CoinDCX API credentials.</p>
+          </div>
+          <button id="accountRetryButton">Retry</button>
+        </div>
+
+        <div id="accountContent">
+          <div class="portfolio-summary">
+            <article class="balance-card primary-balance">
+              <p>Estimated portfolio value</p>
+              <strong id="portfolioValue">₹—</strong>
+              <span id="portfolioUpdated">Connecting to your account…</span>
+            </article>
+            <article class="balance-card">
+              <p>Assets held</p>
+              <strong id="assetCount">—</strong>
+              <span>Non-zero balances</span>
+            </article>
+            <article class="balance-card">
+              <p>Trade history</p>
+              <strong id="tradeCount">—</strong>
+              <span>Fills used for P&amp;L</span>
+            </article>
+          </div>
+
+          <div class="pnl-summary">
+            <article class="pnl-card">
+              <p>Overall portfolio returns</p>
+              <strong id="totalPnl">—</strong>
+              <span id="totalPnlPercent">No cost basis available</span>
+            </article>
+            <article class="pnl-card">
+              <p>Current value</p>
+              <strong id="cryptoCurrentValue">—</strong>
+              <span>Crypto holdings, excluding INR cash</span>
+            </article>
+            <article class="pnl-card">
+              <p>Invested value</p>
+              <strong id="investedValue">—</strong>
+              <span id="pnlCoverage">Calculating coverage…</span>
+            </article>
+            <article class="pnl-card">
+              <p>Realized P&amp;L</p>
+              <strong id="realizedPnl">—</strong>
+              <span>Completed sales from API history</span>
+            </article>
+          </div>
+          <p class="pnl-disclaimer" id="pnlDisclaimer">
+            Estimated using FIFO cost from available spot trade history. Fees, deposits, rewards,
+            transfers and missing fills can affect accuracy.
+          </p>
+
+          <div class="controls portfolio-controls">
+            <label class="search-box">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m20 20-4-4"></path>
+              </svg>
+              <input id="holdingSearchInput" type="search" placeholder="Search your holdings" autocomplete="off" />
+            </label>
+            <label class="select-control">
+              <span>Sort holdings</span>
+              <select id="holdingSort">
+                <option value="return">Return %</option>
+                <option value="pnl">Profit / loss</option>
+                <option value="value">Current value</option>
+                <option value="invested">Invested value</option>
+                <option value="name">Coin name</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="profit-loss-grid">
+            <article class="account-card performance-card profit-card">
+              <div class="card-title">
+                <div>
+                  <p class="eyebrow">IN PROFIT</p>
+                  <h3>Portfolio winners</h3>
+                </div>
+                <span id="profitCoinCount">0 coins</span>
+              </div>
+              <div class="account-table-scroll">
+                <table class="performance-table">
+                  <thead>
+                    <tr>
+                      <th>Coin</th>
+                      <th class="align-right">Invested</th>
+                      <th class="align-right">Current</th>
+                      <th class="align-right">Return</th>
+                    </tr>
+                  </thead>
+                  <tbody id="profitHoldingRows">
+                    <tr><td class="account-placeholder" colspan="4">Loading profitable coins…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="account-card performance-card loss-card">
+              <div class="card-title">
+                <div>
+                  <p class="eyebrow">IN LOSS</p>
+                  <h3>Portfolio losers</h3>
+                </div>
+                <span id="lossCoinCount">0 coins</span>
+              </div>
+              <div class="account-table-scroll">
+                <table class="performance-table">
+                  <thead>
+                    <tr>
+                      <th>Coin</th>
+                      <th class="align-right">Invested</th>
+                      <th class="align-right">Current</th>
+                      <th class="align-right">Return</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lossHoldingRows">
+                    <tr><td class="account-placeholder" colspan="4">Loading losing coins…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+
+          <div class="account-grid">
+            <article class="account-card">
+              <div class="card-title">
+                <div>
+                  <p class="eyebrow">HOLDINGS</p>
+                  <h3>Your assets</h3>
+                </div>
+                <span id="unpricedNotice"></span>
+              </div>
+              <div class="account-table-scroll">
+                <table class="account-table">
+                  <thead>
+                    <tr>
+                      <th>Coin</th>
+                      <th class="align-right">Total held</th>
+                      <th class="align-right">Avg. buy</th>
+                      <th class="align-right">Live price</th>
+                      <th class="align-right">Value</th>
+                      <th class="align-right">Unrealized P&amp;L</th>
+                      <th class="align-right">Allocation</th>
+                    </tr>
+                  </thead>
+                  <tbody id="holdingRows">
+                    <tr><td class="account-placeholder" colspan="7">Loading portfolio…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="account-card">
+              <div class="card-title">
+                <div>
+                  <p class="eyebrow">ACTIVITY</p>
+                  <h3>Recent trades</h3>
+                </div>
+                <span>Last 100</span>
+              </div>
+              <div class="account-table-scroll">
+                <table class="account-table">
+                  <thead>
+                    <tr>
+                      <th>Market</th>
+                      <th>Side</th>
+                      <th class="align-right">Quantity</th>
+                      <th class="align-right">Trade price</th>
+                      <th class="align-right">Live price</th>
+                      <th class="align-right">Since trade</th>
+                      <th class="align-right">Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tradeRows">
+                    <tr><td class="account-placeholder" colspan="7">Loading trades…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="strategy-section">
+        <div class="section-heading account-heading">
+          <div>
+            <p class="eyebrow">DRY-RUN TRADING</p>
+            <h2>MORPHO strategy panel</h2>
+          </div>
+          <div class="secure-badge warning-badge" id="tradePlanStatus">
+            Live orders locked
+          </div>
+        </div>
+
+        <div class="strategy-notice">
+          <strong>No automatic real orders are enabled.</strong>
+          <span>
+            This panel previews selling USDT, SHIB and SUSHI up to INR 40, then buying MORPHO at market price.
+            Exit monitoring is set to sell signal at -1% loss or +3% profit from buy price.
+          </span>
+        </div>
+
+        <div class="strategy-metrics">
+          <article class="pnl-card">
+            <p>Sell target</p>
+            <strong id="tradeSellTarget">â€”</strong>
+            <span>Source: USDT, SHIB, SUSHI</span>
+          </article>
+          <article class="pnl-card">
+            <p>Buy target</p>
+            <strong id="tradeBuyAsset">MORPHO</strong>
+            <span id="tradeBuyMarket">Finding marketâ€¦</span>
+          </article>
+          <article class="pnl-card">
+            <p>Leverage preference</p>
+            <strong id="tradeLeverage">10x</strong>
+            <span>Fallback: 5x if available</span>
+          </article>
+          <article class="pnl-card">
+            <p>Exit rule</p>
+            <strong id="tradeRiskRule">-1% / +3%</strong>
+            <span>Stop loss / take profit</span>
+          </article>
+        </div>
+
+        <div class="strategy-actions">
+          <button id="tradeRefreshButton">Refresh dry run</button>
+          <button id="tradeExecuteButton" disabled>Place real orders locked</button>
+          <span id="tradePlanUpdated">Waiting for strategy previewâ€¦</span>
+        </div>
+
+        <div class="account-grid strategy-grid">
+          <article class="account-card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow">SELL PREVIEW</p>
+                <h3>Funding MORPHO buy</h3>
+              </div>
+              <span id="tradeSellSummary">Dry run</span>
+            </div>
+            <div class="account-table-scroll">
+              <table class="account-table strategy-table">
+                <thead>
+                  <tr>
+                    <th>Coin</th>
+                    <th class="align-right">Market</th>
+                    <th class="align-right">Available</th>
+                    <th class="align-right">Sell value</th>
+                    <th class="align-right">Est. quantity</th>
+                    <th class="align-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tradeSellRows">
+                  <tr><td class="account-placeholder" colspan="6">Loading dry-run sell planâ€¦</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="account-card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow">BUY PREVIEW</p>
+                <h3>MORPHO market order</h3>
+              </div>
+              <span>Preview only</span>
+            </div>
+            <div class="trade-preview-grid">
+              <div>
+                <span>Spot quantity estimate</span>
+                <strong id="tradeBuySpotQty">â€”</strong>
+              </div>
+              <div>
+                <span>10x notional estimate</span>
+                <strong id="tradeBuyLeverageNotional">â€”</strong>
+              </div>
+              <div>
+                <span>10x quantity estimate</span>
+                <strong id="tradeBuyLeverageQty">â€”</strong>
+              </div>
+              <div>
+                <span>Execution mode</span>
+                <strong id="tradeExecutionMode">Dry run</strong>
+              </div>
+            </div>
+            <ul class="trade-warning-list" id="tradeWarnings">
+              <li>Loading warningsâ€¦</li>
+            </ul>
+          </article>
+
+          <article class="account-card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow">AUTOMATION WATCH</p>
+                <h3>Stop-loss / take-profit signals</h3>
+              </div>
+              <span>Updates with account refresh</span>
+            </div>
+            <div class="account-table-scroll">
+              <table class="account-table strategy-table">
+                <thead>
+                  <tr>
+                    <th>Coin</th>
+                    <th class="align-right">Buy price</th>
+                    <th class="align-right">Live price</th>
+                    <th class="align-right">Move</th>
+                    <th class="align-right">Signal</th>
+                  </tr>
+                </thead>
+                <tbody id="tradeSignalRows">
+                  <tr><td class="account-placeholder" colspan="5">Loading automation signalsâ€¦</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="signals-section">
+        <div class="section-heading account-heading">
+          <div>
+            <p class="eyebrow">MOMENTUM STRATEGY</p>
+            <h2>Watchlist signals</h2>
+          </div>
+          <div class="signals-toolbar">
+            <span class="regime-badge" id="signalsRegimeBadge">Regime: —</span>
+            <label class="paper-toggle" title="When ON, BUY/SELL signals automatically open and close simulated paper positions">
+              <input type="checkbox" id="paperToggle" />
+              <span class="paper-toggle-track" aria-hidden="true"><span class="paper-toggle-thumb"></span></span>
+              <span class="paper-toggle-label">Paper trade</span>
+            </label>
+            <button id="backtestOpenButton">Run backtest</button>
+            <button id="signalsRefreshButton" class="ghost-button">Refresh</button>
+          </div>
+        </div>
+
+        <div class="strategy-notice">
+          <strong>Paper trading only — no real orders are ever placed.</strong>
+          <span id="signalsNotice">
+            EMA 20/50/200 trend alignment, RSI 55–75, ADX &gt; 20, volume &gt; 1.2× average and positive
+            10-bar momentum on the 4h timeframe. Exits: trend break, RSI &lt; 45, 2×ATR trailing/hard stop,
+            50% take-profit at +2R. New entries additionally require BTC's daily regime (EMA50/200 +
+            ADX14) to be TREND_UP. Stale data degrades signals to HOLD.
+          </span>
+        </div>
+
+        <div class="pnl-summary paper-summary">
+          <article class="pnl-card">
+            <p>Paper equity</p>
+            <strong id="paperEquity">—</strong>
+            <span id="paperEquityReturn">Simulated portfolio value</span>
+          </article>
+          <article class="pnl-card">
+            <p>Cash available</p>
+            <strong id="paperCash">—</strong>
+            <span>For new paper entries</span>
+          </article>
+          <article class="pnl-card">
+            <p>Open positions</p>
+            <strong id="paperOpenCount">—</strong>
+            <span id="paperCapNote">Max 4 concurrent</span>
+          </article>
+          <article class="pnl-card">
+            <p>Paper P&amp;L</p>
+            <strong id="paperPnl">—</strong>
+            <span id="paperPnlToday">Realized + unrealized</span>
+          </article>
+        </div>
+
+        <div class="account-grid">
+          <article class="account-card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow">SIGNALS</p>
+                <h3>Momentum watchlist</h3>
+              </div>
+              <span id="signalsUpdated">Waiting for signals…</span>
+            </div>
+            <div class="account-table-scroll">
+              <table class="account-table signals-table">
+                <thead>
+                  <tr>
+                    <th>Market</th>
+                    <th class="align-right">Price</th>
+                    <th class="align-right">RSI(14)</th>
+                    <th class="align-right">ADX(14)</th>
+                    <th class="align-right">EMA trend</th>
+                    <th class="align-right">Volume</th>
+                    <th class="align-right">Signal</th>
+                    <th>Reason</th>
+                  </tr>
+                </thead>
+                <tbody id="signalRows">
+                  <tr><td class="account-placeholder" colspan="8">Loading momentum signals…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="account-card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow">PAPER POSITIONS</p>
+                <h3>Simulated open trades</h3>
+              </div>
+              <span id="paperPositionsNote">Paper fills at live ticker price</span>
+            </div>
+            <div class="account-table-scroll">
+              <table class="account-table paper-table">
+                <thead>
+                  <tr>
+                    <th>Market</th>
+                    <th class="align-right">Qty</th>
+                    <th class="align-right">Entry</th>
+                    <th class="align-right">Live</th>
+                    <th class="align-right">Stop</th>
+                    <th class="align-right">Unrealized P&amp;L</th>
+                    <th class="align-right">R</th>
+                    <th class="align-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="paperPositionRows">
+                  <tr><td class="account-placeholder" colspan="8">No open paper positions.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="session-momentum-section" id="sessionMomentumPanel">
+        <div class="section-heading account-heading session-heading">
+          <div>
+            <p class="eyebrow">SESSION MOMENTUM</p>
+            <h2>1-hour trailing-stop session</h2>
+          </div>
+          <div class="session-toolbar">
+            <span class="session-mode-badge idle" id="sessionModeBadge">IDLE</span>
+            <label class="paper-toggle" title="Start or stop Session Momentum paper trading without confirmation">
+              <input type="checkbox" id="sessionPaperToggle" />
+              <span class="paper-toggle-track" aria-hidden="true"><span class="paper-toggle-thumb"></span></span>
+              <span class="paper-toggle-label">Paper mode</span>
+            </label>
+            <button class="live-go-button" id="sessionGoLiveButton">Go Live</button>
+            <button class="live-kill-switch hidden" id="sessionLiveStopButton">STOP LIVE + CLOSE ALL</button>
+          </div>
+        </div>
+
+        <div class="strategy-notice session-notice">
+          <strong>Paper trading is the default and starts immediately with no warnings.</strong>
+          <span id="sessionConfigSummary">Qualified top-gainers universe &middot; 6% trailing stop &middot; 60-minute session &middot; up to 2 positions</span>
+        </div>
+
+        <div class="session-control-bar">
+          <div class="session-timer-wrap">
+            <span>Session timer</span>
+            <strong id="sessionRemaining">Not running</strong>
+          </div>
+          <div class="session-control-actions">
+            <button id="sessionRenewButton" disabled>Renew session</button>
+            <button class="session-end-button" id="sessionEndButton" disabled>End session now</button>
+          </div>
+          <span class="session-action-status" id="sessionActionStatus" role="status">Paper mode ready.</span>
+        </div>
+
+        <div class="pnl-summary session-summary">
+          <article class="pnl-card"><p>Equity</p><strong id="sessionEquity">&mdash;</strong><span id="sessionEquityNote">Paper portfolio value</span></article>
+          <article class="pnl-card"><p>Cash available</p><strong id="sessionCash">&mdash;</strong><span>For new positions</span></article>
+          <article class="pnl-card"><p>Margin used</p><strong id="sessionMarginUsed">&mdash;</strong><span id="sessionLeverageNote">Paper leverage 5x</span></article>
+          <article class="pnl-card"><p>Exposure</p><strong id="sessionExposure">&mdash;</strong><span id="sessionPositionCount">0 open positions</span></article>
+        </div>
+
+        <article class="account-card session-positions-card">
+          <div class="card-title">
+            <div><p class="eyebrow">OPEN POSITIONS</p><h3>Wide trailing-stop trades</h3></div>
+            <span id="sessionPositionNote">Stops ratchet up only</span>
+          </div>
+          <div class="account-table-scroll">
+            <table class="account-table session-positions-table">
+              <thead>
+                <tr><th>Symbol</th><th>Class</th><th class="align-right">Entry</th><th class="align-right">Current</th><th class="align-right">Highest</th><th class="align-right">Trail</th><th class="align-right">Leverage</th><th class="align-right">Margin</th><th class="align-right">P&amp;L</th><th class="align-right">Held</th></tr>
+              </thead>
+              <tbody id="sessionPositionRows"><tr><td class="account-placeholder" colspan="10">No open Session Momentum positions.</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+
+        <details class="runner-log-card session-log-card" id="sessionLogPanel" open>
+          <summary>Session log <span id="sessionLogCount">0 events</span></summary>
+          <div class="runner-log" id="sessionLog"><p class="account-placeholder">No session events yet.</p></div>
+        </details>
+      </section>
+
+      <section class="top-gainers-section">
+        <div class="section-heading account-heading">
+          <div>
+            <p class="eyebrow">PAPER MOMENTUM</p>
+            <h2>Top Gainers Momentum</h2>
+          </div>
+          <label class="paper-toggle" title="Enable the paper-only top-gainers runner">
+            <input type="checkbox" id="topGainersToggle" />
+            <span class="paper-toggle-track" aria-hidden="true"><span class="paper-toggle-thumb"></span></span>
+            <span class="paper-toggle-label">Runner</span>
+          </label>
+        </div>
+
+        <div class="strategy-notice">
+          <strong>Paper trading only — real order endpoints remain locked.</strong>
+          <span>Ranks every INR pair by 24h gain after a ₹10 lakh volume floor, opens equal slots, and exits only at the ratcheting 2% stop or +50% cap.</span>
+        </div>
+
+        <div class="pnl-summary top-gainers-summary">
+          <article class="pnl-card"><p>Equity</p><strong id="topGainersEquity">—</strong><span id="topGainersEnabledText">Runner disabled</span></article>
+          <article class="pnl-card"><p>Cash</p><strong id="topGainersCash">—</strong><span>10% target reserve</span></article>
+          <article class="pnl-card"><p>Unrealized P&amp;L</p><strong id="topGainersUnrealized">—</strong><span id="topGainersPositionCount">0 open positions</span></article>
+          <article class="pnl-card"><p>Realized today</p><strong id="topGainersRealized">—</strong><span id="topGainersNextRescan">Next rescan —</span></article>
+        </div>
+
+        <div class="account-grid top-gainers-grid">
+          <article class="account-card">
+            <div class="card-title">
+              <div><p class="eyebrow">QUALIFIED UNIVERSE</p><h3>Live liquid gainers</h3></div>
+              <span id="topGainersUniverseStats">Loading universe…</span>
+            </div>
+            <div class="account-table-scroll">
+              <table class="account-table top-gainers-table">
+                <thead><tr><th>Rank</th><th>Symbol</th><th class="align-right">24h</th><th class="align-right">INR volume</th><th class="align-right">Status</th></tr></thead>
+                <tbody id="topGainersUniverseRows"><tr><td class="account-placeholder" colspan="5">Loading qualified gainers…</td></tr></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="account-card">
+            <div class="card-title">
+              <div><p class="eyebrow">OPEN POSITIONS</p><h3>Trailing-stop paper trades</h3></div>
+              <span>Stop checks every 5 minutes</span>
+            </div>
+            <div class="account-table-scroll">
+              <table class="account-table top-gainers-positions-table">
+                <thead><tr><th>Symbol</th><th class="align-right">Entry</th><th class="align-right">Current</th><th class="align-right">Highest</th><th class="align-right">Stop</th><th class="align-right">TP</th><th class="align-right">P&amp;L</th><th class="align-right">To stop</th><th class="align-right">To TP</th><th class="align-right">Held</th></tr></thead>
+                <tbody id="topGainersPositionRows"><tr><td class="account-placeholder" colspan="10">No open paper positions.</td></tr></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+
+        <details class="runner-log-card" id="topGainersLogPanel">
+          <summary>Runner log <span id="topGainersLogCount">0 events</span></summary>
+          <div class="runner-log" id="topGainersLog"><p class="account-placeholder">No runner events yet.</p></div>
+        </details>
+      </section>
+
+      <section class="cross-sectional-section">
+        <div class="section-heading account-heading">
+          <div>
+            <p class="eyebrow">CROSS-SECTIONAL MOMENTUM</p>
+            <h2>Weekly relative-strength ranking</h2>
+          </div>
+          <span class="regime-badge" id="regimeBadge">Regime: —</span>
+        </div>
+
+        <div class="strategy-notice">
+          <strong>Ranking only — not auto-traded.</strong>
+          <span>
+            Ranks the watchlist by risk-adjusted trailing return (mean ÷ stdev of daily returns) over
+            the last <span id="crossSectionalLookback">30</span> days. Rebalances weekly (Monday 00:00
+            IST): the top <span id="crossSectionalTopN">2</span> are held equal-weight when BTC's regime
+            is TREND_UP, else the strategy holds 100% cash. Rank is live; HELD status reflects the last
+            weekly rebalance. No paper or real orders are placed from this panel.
+          </span>
+        </div>
+
+        <div class="account-grid">
+          <article class="account-card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow">RANKING</p>
+                <h3>This week's relative strength</h3>
+              </div>
+              <span id="rankingUpdated">Waiting for ranking…</span>
+            </div>
+            <div class="account-table-scroll">
+              <table class="account-table ranking-table">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Market</th>
+                    <th class="align-right">Score</th>
+                    <th class="align-right">Weight</th>
+                    <th class="align-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="rankingRows">
+                  <tr><td class="account-placeholder" colspan="5">Loading ranking…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="movers-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">LIVE TRACKING</p>
+            <h2>Market gainers &amp; losers</h2>
+          </div>
+          <p class="updated">Ranked by 24-hour price change</p>
+        </div>
+
+        <div class="controls">
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-4-4"></path>
+            </svg>
+            <input id="moverSearchInput" type="search" placeholder="Search market movers" autocomplete="off" />
+          </label>
+          <div class="control-cluster">
+            <div class="filter-pills" id="moverQuoteFilters" aria-label="Market movers quote currency">
+              <button data-quote="ALL">All</button>
+              <button class="active" data-quote="INR">INR</button>
+              <button data-quote="USDT">USDT</button>
+              <button data-quote="BTC">BTC</button>
+            </div>
+            <label class="select-control">
+              <span>Show</span>
+              <select id="moverLimit">
+                <option value="all" selected>All markets</option>
+                <option value="5">Top 5</option>
+                <option value="10">Top 10</option>
+                <option value="20">Top 20</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="profit-loss-grid market-movers-grid">
+          <article class="account-card performance-card profit-card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow">TOP GAINERS</p>
+                <h3>Markets moving up</h3>
+              </div>
+              <span id="marketGainerCount">0 markets</span>
+            </div>
+            <div class="account-table-scroll mover-table-scroll">
+              <table class="mover-table">
+                <thead>
+                  <tr>
+                    <th>Market</th>
+                    <th class="align-right">Price</th>
+                    <th class="align-right">24h</th>
+                    <th class="align-right">Volume</th>
+                    <th class="align-right">Trend</th>
+                  </tr>
+                </thead>
+                <tbody id="marketGainerRows">
+                  <tr><td class="account-placeholder" colspan="5">Loading gainers…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="account-card performance-card loss-card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow">TOP LOSERS</p>
+                <h3>Markets moving down</h3>
+              </div>
+              <span id="marketLoserCount">0 markets</span>
+            </div>
+            <div class="account-table-scroll mover-table-scroll">
+              <table class="mover-table">
+                <thead>
+                  <tr>
+                    <th>Market</th>
+                    <th class="align-right">Price</th>
+                    <th class="align-right">24h</th>
+                    <th class="align-right">Volume</th>
+                    <th class="align-right">Trend</th>
+                  </tr>
+                </thead>
+                <tbody id="marketLoserRows">
+                  <tr><td class="account-placeholder" colspan="5">Loading losers…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="popular-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">MARKET DISCOVERY</p>
+            <h2>Popular coins</h2>
+          </div>
+          <p class="updated">High-interest crypto assets</p>
+        </div>
+
+        <div class="controls">
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-4-4"></path>
+            </svg>
+            <input id="popularSearchInput" type="search" placeholder="Search popular coins" autocomplete="off" />
+          </label>
+          <div class="control-cluster">
+            <div class="filter-pills" id="popularQuoteFilters" aria-label="Popular coin quote currency">
+              <button class="active" data-quote="INR">INR</button>
+              <button data-quote="USDT">USDT</button>
+            </div>
+            <label class="select-control">
+              <span>Sort</span>
+              <select id="popularSort">
+                <option value="rank">Popular</option>
+                <option value="change-desc">Top gainers</option>
+                <option value="change-asc">Top losers</option>
+                <option value="volume">Volume</option>
+                <option value="price">Price</option>
+                <option value="name">Name</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Coin</th>
+                  <th class="align-right">Live price</th>
+                  <th class="align-right">24h change</th>
+                  <th class="align-right hide-mobile">24h high</th>
+                  <th class="align-right hide-tablet">24h volume</th>
+                  <th class="align-right">Trend</th>
+                </tr>
+              </thead>
+              <tbody id="popularRows">
+                <tr><td class="account-placeholder" colspan="7">Loading popular coins…</td></tr>
+              </tbody>
+            </table>
+            <div class="empty-state hidden" id="popularEmptyState">No popular coins match this search.</div>
+          </div>
+          <div class="table-footer">
+            <p id="popularResultsCount">0 popular coins</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">MARKET OVERVIEW</p>
+            <h2>Live prices</h2>
+          </div>
+          <p class="updated" id="updatedText">Fetching latest market data…</p>
+        </div>
+
+        <div class="controls">
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-4-4"></path>
+            </svg>
+            <input id="searchInput" type="search" placeholder="Search assets or markets" autocomplete="off" />
+          </label>
+          <div class="control-cluster">
+            <div class="filter-pills" id="quoteFilters" aria-label="Filter by quote currency">
+              <button class="active" data-quote="ALL">All</button>
+              <button data-quote="INR">INR</button>
+              <button data-quote="USDT">USDT</button>
+              <button data-quote="BTC">BTC</button>
+            </div>
+            <label class="select-control">
+              <span>Sort</span>
+              <select id="marketSort">
+                <option value="volume">Volume</option>
+                <option value="change">24h change</option>
+                <option value="price">Price</option>
+                <option value="name">Name</option>
+              </select>
+            </label>
+            <button class="sort-direction" id="sortDirection" aria-label="Toggle sort direction" title="Toggle sort direction">↓</button>
+            <label class="select-control page-size-control">
+              <span>Rows</span>
+              <select id="pageSize">
+                <option value="12">12</option>
+                <option value="24">24</option>
+                <option value="48">48</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="loading-state" id="loadingState">
+            <div class="loader"></div>
+            <p>Loading live markets…</p>
+          </div>
+          <div class="error-state hidden" id="errorState">
+            <strong>Market data could not be loaded.</strong>
+            <p id="errorMessage">Check the server connection and try again.</p>
+            <button id="retryButton">Try again</button>
+          </div>
+          <div class="table-scroll" id="tableWrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Market</th>
+                  <th class="align-right">Last price</th>
+                  <th class="align-right">24h change</th>
+                  <th class="align-right hide-mobile">24h high</th>
+                  <th class="align-right hide-tablet">24h low</th>
+                  <th class="align-right hide-tablet">Volume</th>
+                  <th class="align-right">Trend</th>
+                </tr>
+              </thead>
+              <tbody id="marketRows"></tbody>
+            </table>
+            <div class="empty-state hidden" id="emptyState">No markets match this filter.</div>
+          </div>
+          <div class="table-footer">
+            <p id="resultsCount">0 markets</p>
+            <div class="pagination">
+              <button id="previousPage" aria-label="Previous page">←</button>
+              <span id="pageLabel">1 / 1</span>
+              <button id="nextPage" aria-label="Next page">→</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal-backdrop hidden" id="backtestModal" role="dialog" aria-modal="true" aria-labelledby="backtestTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">WALK-FORWARD BACKTEST</p>
+            <h3 id="backtestTitle">Strategy backtest</h3>
+          </div>
+          <button id="backtestCloseButton" aria-label="Close backtest">✕</button>
+        </div>
+
+        <form id="backtestForm" class="backtest-form">
+          <label class="backtest-strategy-field">
+            <span>Strategy</span>
+            <select id="backtestStrategy">
+              <option value="momentum4h">Momentum 4h</option>
+              <option value="csPrevious">Cross-Sectional (previous)</option>
+              <option value="cs30ema">Cross-Sectional 30-day EMA</option>
+              <option value="cs60ema">Cross-Sectional 60-day EMA</option>
+              <option value="topGainers">Top Gainers Trailing Stop</option>
+              <option value="sessionMomentum">Session Momentum</option>
+              <option value="btcHold">BTC Buy &amp; Hold</option>
+            </select>
+          </label>
+          <div class="backtest-dynamic-fields" id="backtestDynamicFields"></div>
+          <label>
+            <span>Symbol</span>
+            <select id="backtestSymbol"></select>
+          </label>
+          <label>
+            <span>Timeframe</span>
+            <select id="backtestInterval">
+              <option value="1h">1h</option>
+              <option value="2h">2h</option>
+              <option value="4h" selected>4h</option>
+              <option value="6h">6h</option>
+              <option value="1d">1d</option>
+            </select>
+          </label>
+          <label>
+            <span>From</span>
+            <input type="date" id="backtestFrom" />
+          </label>
+          <label>
+            <span>To</span>
+            <input type="date" id="backtestTo" />
+          </label>
+          <label>
+            <span>Equity (₹)</span>
+            <input type="number" id="backtestEquity" value="100000" min="1000" step="1000" />
+          </label>
+          <label>
+            <span>Risk / trade %</span>
+            <input type="number" id="backtestRisk" value="0.5" min="0.1" max="5" step="0.1" />
+          </label>
+          <div class="backtest-form-actions">
+            <button type="submit" id="backtestRunButton">Run backtest</button>
+            <span id="backtestStatus">Fees 0.1%/side and 1% TDS on sells are included.</span>
+          </div>
+        </form>
+
+        <details class="backtest-log-panel" id="backtestLogPanel" open>
+          <summary>Backtest log <span class="backtest-spinner hidden" id="backtestSpinner" aria-label="Backtest running"></span></summary>
+          <pre id="backtestLog">Choose a strategy and run a backtest.</pre>
+        </details>
+
+        <div class="backtest-results hidden" id="backtestResults">
+          <div class="backtest-stats" id="backtestStats"></div>
+          <div class="backtest-chart-wrap">
+            <canvas id="backtestChart" aria-label="Equity curve chart" role="img"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="session-renew-toast hidden" id="sessionRenewToast" role="status" aria-live="polite">
+      <div><strong>10 min remaining &mdash; renew?</strong><span>Your live positions will close at session expiry.</span></div>
+      <button id="sessionToastRenewButton">Renew session</button>
+      <button class="toast-dismiss-button" id="sessionToastDismissButton" aria-label="Dismiss renewal reminder">&times;</button>
+    </div>
+
+    <div class="modal-backdrop hidden" id="liveGateModal" role="dialog" aria-modal="true" aria-labelledby="liveGateTitle">
+      <div class="modal live-gate-modal">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow" id="liveGateStep">LIVE TRADING GATE &middot; STEP 1 OF 5</p>
+            <h3 id="liveGateTitle">Switch to LIVE trading?</h3>
+          </div>
+          <button id="liveGateCloseButton" aria-label="Cancel live trading setup">&times;</button>
+        </div>
+        <div class="live-gate-body" id="liveGateBody"></div>
+        <div class="live-gate-error hidden" id="liveGateError" role="alert"></div>
+        <div class="live-gate-actions" id="liveGateActions"></div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Market data provided by CoinDCX public APIs.</p>
+      <p>Prices update every second. Private account data updates every 15 seconds.</p>
+    </footer>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
