@@ -1,0 +1,64 @@
+
+## Data sanity: largest single-day close-to-close moves
+BTC    -36.6 2020-03-12
+ETH    -38.2 2020-03-12
+BNB    94.4 2020-11-01
+XRP    69.9 2023-07-13
+ADA    137.0 2020-12-17
+DOGE   106.2 2021-04-16
+SOL    -41.5 2022-11-09
+DOT    -34.3 2021-05-19
+LINK   -33.8 2021-05-19
+TRX    101.2 2024-12-03
+BCH    59.3 2024-03-02
+XLM    74.3 2021-01-06
+AVAX   -29.5 2022-05-11
+UNI    49.2 2024-02-23
+ETC    31.5 2022-07-27
+ATOM   28.1 2021-09-09
+SHIB   71.0 2021-10-27
+
+BTC hold: CAGR 24.2 DD 73.6 Sharpe 0.69 | 2024+ CAGR 30.5
+
+## EMA fast/slow grid on BTC (full-period Sharpe / CAGR / maxDD)
+fast\slow               40              50              60              80             100
+10               0.95/30/53      0.99/33/49      0.90/29/50      0.89/28/49      0.93/30/38
+15               1.00/34/44      0.93/30/49      0.98/33/48      0.88/28/48      0.88/28/39
+20               0.91/30/47      0.99/33/47      0.89/29/53      0.91/29/39      0.80/24/47
+25               1.00/34/46      0.94/31/52      0.80/24/50      0.89/28/39      0.78/24/48
+30               1.04/36/48      0.90/29/48      0.80/24/45      0.77/23/46      0.82/26/46
+
+## Price above N-day SMA on BTC
+SMA50   Sharpe 0.75 CAGR 22.1 DD 59.0 trades/yr 8.8 | 2024+ CAGR 15.7
+SMA60   Sharpe 0.70 CAGR 20.2 DD 61.6 trades/yr 8.1 | 2024+ CAGR 16.1
+SMA80   Sharpe 0.81 CAGR 24.6 DD 59.5 trades/yr 6.7 | 2024+ CAGR 24.0
+SMA100  Sharpe 0.99 CAGR 32.7 DD 51.5 trades/yr 5.0 | 2024+ CAGR 26.2
+SMA120  Sharpe 1.15 CAGR 39.9 DD 43.9 trades/yr 3.1 | 2024+ CAGR 31.6
+SMA150  Sharpe 0.88 CAGR 27.6 DD 44.2 trades/yr 3.5 | 2024+ CAGR 17.1
+SMA200  Sharpe 0.61 CAGR 16.5 DD 54.2 trades/yr 4.5 | 2024+ CAGR 5.1
+
+## Donchian entry/exit grid on BTC (Sharpe / CAGR / maxDD)
+D20/10   Sharpe 0.69 CAGR 17.5 DD 49.7 trades/yr 7.9 | 2024+ CAGR 15.1
+D30/15   Sharpe 0.80 CAGR 21.3 DD 40.0 trades/yr 5.0 | 2024+ CAGR 13.3
+D40/20   Sharpe 0.76 CAGR 19.8 DD 44.7 trades/yr 4.0 | 2024+ CAGR 14.7
+D55/20   Sharpe 0.90 CAGR 24.1 DD 33.2 trades/yr 3.6 | 2024+ CAGR 18.9
+D55/30   Sharpe 0.85 CAGR 23.9 DD 37.9 trades/yr 2.9 | 2024+ CAGR 27.7
+D70/30   Sharpe 0.86 CAGR 23.4 DD 33.1 trades/yr 2.4 | 2024+ CAGR 30.9
+D100/50  Sharpe 0.63 CAGR 16.2 DD 42.1 trades/yr 1.9 | 2024+ CAGR 7.1
+
+## Same rules on other coins (Sharpe strategy vs hold; CAGR strategy vs hold; DD strategy vs hold)
+ETH   hold 0.70/28%/78%      EMA20/50 1.05/50%/54%   SMA100 0.70/25%/75%   Don55/20 0.83/30%/41%
+BNB   hold 1.06/73%/69%      EMA20/50 1.09/71%/72%   SMA100 0.72/32%/89%   Don55/20 1.15/73%/53%
+XRP   hold 0.79/40%/83%      EMA20/50 0.34/2%/90%   SMA100 0.13/-12%/95%   Don55/20 0.57/19%/56%
+ADA   hold 0.52/9%/93%       EMA20/50 1.04/58%/64%   SMA100 0.92/47%/74%   Don55/20 0.83/36%/59%
+SOL   hold 0.55/12%/96%      EMA20/50 0.56/17%/74%   SMA100 -0.04/-13%/86%   Don55/20 0.40/9%/69%
+DOGE  hold 0.59/13%/92%      EMA20/50 0.22/-8%/90%   SMA100 -0.30/-30%/94%   Don55/20 0.19/-4%/78%
+LINK  hold 0.51/4%/88%       EMA20/50 -0.01/-19%/96%   SMA100 -0.07/-20%/94%   Don55/20 0.09/-8%/82%
+TRX   hold 0.96/61%/70%      EMA20/50 0.74/37%/73%   SMA100 0.50/15%/79%   Don55/20 0.55/21%/73%
+AVAX  hold 0.46/1%/95%       EMA20/50 0.58/18%/76%   SMA100 0.39/7%/80%   Don55/20 0.67/24%/62%
+DOT   hold -0.21/-42%/98%    EMA20/50 0.08/-10%/80%   SMA100 0.01/-11%/84%   Don55/20 0.01/-9%/68%
+
+## Cost sensitivity (full period CAGR / Sharpe)
+BTC EMA20/50   fee0.1 slip0.1: 37.8%/1.09  |  fee0.5 slip0.2 (base): 33.3%/0.99  |  fee0.5 slip0.5: 31.1%/0.94  |  base, TDS refunded: 37.1%/1.08
+BTC SMA100     fee0.1 slip0.1: 40.8%/1.16  |  fee0.5 slip0.2 (base): 32.7%/0.99  |  fee0.5 slip0.5: 28.7%/0.90  |  base, TDS refunded: 39.6%/1.14
+BTC Don55/20   fee0.1 slip0.1: 29.5%/1.05  |  fee0.5 slip0.2 (base): 24.1%/0.90  |  fee0.5 slip0.5: 21.3%/0.82  |  base, TDS refunded: 28.7%/1.03

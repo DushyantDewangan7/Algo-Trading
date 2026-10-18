@@ -16,7 +16,10 @@
     "backtest:top-gainers": "node strategy/top-gainers-backtest.js",
     "backtest:session": "node strategy/session-momentum-backtest.js",
     "backtest:session:presets": "node scripts/run-session-backtest-presets.js",
-    "check:universe": "node scripts/check-universe.js"
+    "check:universe": "node scripts/check-universe.js",
+    "research": "node research/run.js",
+    "research:intraday": "node research/intraday.js",
+    "research:robustness": "node research/robustness.js"
   },
   "license": "ISC",
   "type": "commonjs",

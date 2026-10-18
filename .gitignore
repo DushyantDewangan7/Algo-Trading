@@ -14,3 +14,5 @@ trading.db
 trading.db-shm
 trading.db-wal
 backtest-results/
+
+research/data/
