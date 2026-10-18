@@ -19,7 +19,9 @@
     "check:universe": "node scripts/check-universe.js",
     "research": "node research/run.js",
     "research:intraday": "node research/intraday.js",
-    "research:robustness": "node research/robustness.js"
+    "research:robustness": "node research/robustness.js",
+    "research:futures": "node research/futures-run.js",
+    "research:futures:robustness": "node research/futures-robustness.js"
   },
   "license": "ISC",
   "type": "commonjs",

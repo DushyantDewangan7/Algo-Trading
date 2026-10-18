@@ -1,0 +1,10 @@
+Gap = INR price / (USDT price × USDT/INR) − 1, hourly closes since 2025-10-01
+Round-trip cost to capture a gap ≈ 4.4%
+
+coin   hours   median|gap|%   p95|gap|%   max|gap|%   hours with |gap| > cost
+BTC      9175           0.42        0.87        2.27            0
+ETH      9175           0.39        0.81        2.52            0
+SOL      9175           0.40        0.81        2.80            0
+XRP      9175           0.40        0.80        2.23            0
+DOGE     9175           0.44        0.84        2.32            0
+BNB      9183           0.46        0.86        2.04            0
